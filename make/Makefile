@@ -94,7 +94,7 @@ endif
 IDL2RPC_CALL 				= idl2rpc.pl
 #===============================================================================
 # configure wxWidgets build
-WXVERSION		= 2.8
+WXVERSION		= 3.1
 WXCONFIG_CALL		= `wx-config --cxxflags --version=$(WXVERSION)`
 WXCONFIG_LINKER_CALL	= `wx-config --version=$(WXVERSION) --libs adv,aui,core,base,html,richtext,xml`
 
