@@ -288,14 +288,12 @@ void CubeDlg::CubeDlgSize(wxSizeEvent& WXUNUSED(event))
 
 void CubeDlg::OnTimer(wxTimerEvent& WXUNUSED(event))
 {
-	 double px, py, pz;
-
 	 // rotate
 	 for (unsigned int i=0;i<8;i++) 
 	 {
-	 	 px = m_p[i][X];
-	 	 py = m_p[i][Y];
-	 	 pz = m_p[i][Z];
+	 	 double px = m_p[i][X];
+	 	 double py = m_p[i][Y];
+	 	 double pz = m_p[i][Z];
 
 	 	 // Rotate x-axis
 	 	 m_p[i][Y] = py*cos(m_angle_x)-pz*sin(m_angle_x);
