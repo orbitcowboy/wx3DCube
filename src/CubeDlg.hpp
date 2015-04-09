@@ -20,42 +20,42 @@ class CubeDlg : public wxDialog
 {
     public:
 
-        CubeDlg(wxWindow *parent, wxWindowID id = 1, const wxString &title = wxT("wx3DCube"), 
-				 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-				 long style = wxSUNKEN_BORDER | wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxDIALOG_NO_PARENT | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX);
+        CubeDlg(wxWindow *parent, wxWindowID id = 1, const wxString &title = wxT("wx3DCube"),
+                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+                long style = wxSUNKEN_BORDER | wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxDIALOG_NO_PARENT | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX);
 
         virtual ~CubeDlg();
-	
-		// Event handler
+
+        // Event handler
         void CubeDlgPaint(wxPaintEvent& event);
         void CubeDlgSize(wxSizeEvent& event);
         void OnTimer(wxTimerEvent& event);
 
     private:
 
-		// a pointer to a timer object
+        // a pointer to a timer object
         wxTimer *m_timer;
 
-		// 8 edges with 3 coordinates each
-		double m_p[8][3];
+        // 8 edges with 3 coordinates each
+        double m_p[8][3];
 
-		// aux vars
-		enum EKoordinateAxisIndex { X=0, Y, Z };
- 		// rotation angles in radian
-    	double m_angle_x;
-    	double m_angle_y;
-    	double m_angle_z;
+        // aux vars
+        enum EKoordinateAxisIndex { X = 0, Y, Z };
+        // rotation angles in radian
+        double m_angle_x;
+        double m_angle_y;
+        double m_angle_z;
 
         enum wxIDs
         {
             ID_WXTIMER1 = 1001,
-            ID_DUMMY_VALUE_ 
+            ID_DUMMY_VALUE_
         };
 
         void OnClose(wxCloseEvent& event);
         void CreateGUIControls();
 
-		void DrawPolygon(wxBufferedPaintDC &dc, const unsigned int &i, const unsigned int &j, const unsigned int &k, const unsigned int &l); 
+        void DrawPolygon(wxBufferedPaintDC &dc, const unsigned int &i, const unsigned int &j, const unsigned int &k, const unsigned int &l);
 
         DECLARE_EVENT_TABLE()
 };
