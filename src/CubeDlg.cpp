@@ -1,5 +1,7 @@
 #include "CubeDlg.hpp"
 #include <wx/pen.h>
+#include <wx/dcgraph.h>
+
 BEGIN_EVENT_TABLE(CubeDlg, wxDialog)
     EVT_CLOSE(CubeDlg::OnClose)
     EVT_SIZE(CubeDlg::CubeDlgSize)
@@ -80,7 +82,8 @@ void CubeDlg::OnClose(wxCloseEvent& WXUNUSED(event))
 void CubeDlg::CubeDlgPaint(wxPaintEvent& WXUNUSED(event))
 {
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    wxBufferedPaintDC dc(this);
+    wxBufferedPaintDC pdc(this);
+    wxGCDC dc( pdc ) ;
 
     // Get window dimensions
     wxSize sz = GetClientSize();
@@ -104,18 +107,18 @@ void CubeDlg::CubeDlgPaint(wxPaintEvent& WXUNUSED(event))
 
     // initial cube coordinates:
     // --> use center.x (center.y) to ensure the cube stays allways in the center of the canvas
-    dc.DrawLine((int)(m_p[0][X]) + center.x, (int)(m_p[0][Y]) + center.y, (int)(m_p[1][X]) + center.x, (int)(m_p[1][Y]) + center.y);
-    dc.DrawLine((int)(m_p[1][X]) + center.x, (int)(m_p[1][Y]) + center.y, (int)(m_p[2][X]) + center.x, (int)(m_p[2][Y]) + center.y);
-    dc.DrawLine((int)(m_p[2][X]) + center.x, (int)(m_p[2][Y]) + center.y, (int)(m_p[3][X]) + center.x, (int)(m_p[3][Y]) + center.y);
-    dc.DrawLine((int)(m_p[3][X]) + center.x, (int)(m_p[3][Y]) + center.y, (int)(m_p[0][X]) + center.x, (int)(m_p[0][Y]) + center.y);
-    dc.DrawLine((int)(m_p[4][X]) + center.x, (int)(m_p[4][Y]) + center.y, (int)(m_p[5][X]) + center.x, (int)(m_p[5][Y]) + center.y);
-    dc.DrawLine((int)(m_p[5][X]) + center.x, (int)(m_p[5][Y]) + center.y, (int)(m_p[6][X]) + center.x, (int)(m_p[6][Y]) + center.y);
-    dc.DrawLine((int)(m_p[6][X]) + center.x, (int)(m_p[6][Y]) + center.y, (int)(m_p[7][X]) + center.x, (int)(m_p[7][Y]) + center.y);
-    dc.DrawLine((int)(m_p[7][X]) + center.x, (int)(m_p[7][Y]) + center.y, (int)(m_p[4][X]) + center.x, (int)(m_p[4][Y]) + center.y);
-    dc.DrawLine((int)(m_p[0][X]) + center.x, (int)(m_p[0][Y]) + center.y, (int)(m_p[4][X]) + center.x, (int)(m_p[4][Y]) + center.y);
-    dc.DrawLine((int)(m_p[1][X]) + center.x, (int)(m_p[1][Y]) + center.y, (int)(m_p[5][X]) + center.x, (int)(m_p[5][Y]) + center.y);
-    dc.DrawLine((int)(m_p[2][X]) + center.x, (int)(m_p[2][Y]) + center.y, (int)(m_p[6][X]) + center.x, (int)(m_p[6][Y]) + center.y);
-    dc.DrawLine((int)(m_p[3][X]) + center.x, (int)(m_p[3][Y]) + center.y, (int)(m_p[7][X]) + center.x, (int)(m_p[7][Y]) + center.y);
+    dc.DrawLine((m_p[0][X]) + center.x, (m_p[0][Y]) + center.y, (m_p[1][X]) + center.x, (m_p[1][Y]) + center.y);
+    dc.DrawLine((m_p[1][X]) + center.x, (m_p[1][Y]) + center.y, (m_p[2][X]) + center.x, (m_p[2][Y]) + center.y);
+    dc.DrawLine((m_p[2][X]) + center.x, (m_p[2][Y]) + center.y, (m_p[3][X]) + center.x, (m_p[3][Y]) + center.y);
+    dc.DrawLine((m_p[3][X]) + center.x, (m_p[3][Y]) + center.y, (m_p[0][X]) + center.x, (m_p[0][Y]) + center.y);
+    dc.DrawLine((m_p[4][X]) + center.x, (m_p[4][Y]) + center.y, (m_p[5][X]) + center.x, (m_p[5][Y]) + center.y);
+    dc.DrawLine((m_p[5][X]) + center.x, (m_p[5][Y]) + center.y, (m_p[6][X]) + center.x, (m_p[6][Y]) + center.y);
+    dc.DrawLine((m_p[6][X]) + center.x, (m_p[6][Y]) + center.y, (m_p[7][X]) + center.x, (m_p[7][Y]) + center.y);
+    dc.DrawLine((m_p[7][X]) + center.x, (m_p[7][Y]) + center.y, (m_p[4][X]) + center.x, (m_p[4][Y]) + center.y);
+    dc.DrawLine((m_p[0][X]) + center.x, (m_p[0][Y]) + center.y, (m_p[4][X]) + center.x, (m_p[4][Y]) + center.y);
+    dc.DrawLine((m_p[1][X]) + center.x, (m_p[1][Y]) + center.y, (m_p[5][X]) + center.x, (m_p[5][Y]) + center.y);
+    dc.DrawLine((m_p[2][X]) + center.x, (m_p[2][Y]) + center.y, (m_p[6][X]) + center.x, (m_p[6][Y]) + center.y);
+    dc.DrawLine((m_p[3][X]) + center.x, (m_p[3][Y]) + center.y, (m_p[7][X]) + center.x, (m_p[7][Y]) + center.y);
 
     /*
         DrawPolygon(dc, 0,1,2,3);
