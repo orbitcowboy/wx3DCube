@@ -1,1 +1,1 @@
- 
+KWStyle is integrated in the software process to ensure that the code written by several users is consistent and can be viewed/printed as it was written by one person. KWStyle is primarily checking C/C++ source code but can be easily extended to other languages. It assumes that the code is syntactically correct, i.e it compiles on a standard compiler.

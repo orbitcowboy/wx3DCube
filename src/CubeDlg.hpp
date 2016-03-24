@@ -55,8 +55,6 @@ class CubeDlg : public wxDialog
         void OnClose(wxCloseEvent& event);
         void CreateGUIControls();
 
-        void DrawPolygon(wxBufferedPaintDC &dc, const unsigned int &i, const unsigned int &j, const unsigned int &k, const unsigned int &l);
-
         DECLARE_EVENT_TABLE()
 };
 

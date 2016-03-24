@@ -82,16 +82,23 @@ void CubeDlg::OnClose(wxCloseEvent& WXUNUSED(event))
 void CubeDlg::CubeDlgPaint(wxPaintEvent& WXUNUSED(event))
 {
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    wxBufferedPaintDC pdc(this);
-    wxGCDC dc( pdc ) ;
+    wxAutoBufferedPaintDC pdc(this);
+    wxGCDC gdc;
+    wxGraphicsRenderer * const graphicsRenderer = wxGraphicsRenderer::GetDefaultRenderer();
+    wxGraphicsContext * graphicsContext = graphicsRenderer->CreateContext(pdc);
+    graphicsContext->SetAntialiasMode(wxANTIALIAS_DEFAULT);
+    graphicsContext->SetInterpolationQuality(wxINTERPOLATION_BEST);
+    gdc.SetGraphicsContext(graphicsContext);
+    wxDC & dc = (wxDC &)gdc;
+    PrepareDC(dc);
 
     // Get window dimensions
     wxSize sz = GetClientSize();
     // determine the center of the canvas
-    const wxPoint center(wxPoint(sz.x / 2, sz.y / 2));
+    const wxRealPoint center(wxPoint(sz.x / 2.0, sz.y / 2.0));
 
     // create background color
-    wxColour powderblue = wxColour(176, 224, 230);
+    const wxColour powderblue(176, 224, 230);
 
     // draw powderblue background
     dc.SetPen(powderblue);
@@ -100,8 +107,7 @@ void CubeDlg::CubeDlgPaint(wxPaintEvent& WXUNUSED(event))
 
 
     // draw clock border
-    wxPen Pen(*wxBLACK_PEN);
-    Pen.SetWidth(1);
+    const wxPen Pen(*wxBLACK, 1);
     dc.SetPen(Pen);
     dc.SetBrush(*wxBLACK_BRUSH);
 
@@ -144,160 +150,93 @@ void CubeDlg::CubeDlgPaint(wxPaintEvent& WXUNUSED(event))
             - (m_p[0][Y]*c[0] - m_p[1][Y]*c[1]) * (m_p[2][X]*c[2] - m_p[1][X]*c[1])) > 0)
     {
         // |1->0 x 1->2| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[0][X] * c[0]) + center.x;
-        pt[1].x = (m_p[1][X] * c[1]) + center.x;
-        pt[2].x = (m_p[2][X] * c[2]) + center.x;
-        pt[3].x = (m_p[3][X] * c[3]) + center.x;
-
-        pt[0].y = (m_p[0][Y] * c[0]) + center.y;
-        pt[1].y = (m_p[1][Y] * c[1]) + center.y;
-        pt[2].y = (m_p[2][Y] * c[2]) + center.y;
-        pt[3].y = (m_p[3][Y] * c[3]) + center.y;
-        dc.SetBrush(*wxRED_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[0][X] * c[0]) + center.x, (m_p[0][Y] * c[0]) + center.y),
+            wxPoint2DDouble((m_p[1][X] * c[1]) + center.x, (m_p[1][Y] * c[1]) + center.y),
+            wxPoint2DDouble((m_p[2][X] * c[2]) + center.x, (m_p[2][Y] * c[2]) + center.y),
+            wxPoint2DDouble((m_p[3][X] * c[3]) + center.x, (m_p[3][Y] * c[3]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxRED_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
     else if(((m_p[6][X]*c[6] - m_p[5][X]*c[5]) * (m_p[4][Y]*c[4] - m_p[5][Y]*c[5])
              - (m_p[6][Y]*c[6] - m_p[5][Y]*c[5]) * (m_p[4][X]*c[4] - m_p[5][X]*c[5])) > 0)
     {
         // |5->6 x 5->4| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[4][X] * c[4]) + center.x;
-        pt[1].x = (m_p[5][X] * c[5]) + center.x;
-        pt[2].x = (m_p[6][X] * c[6]) + center.x;
-        pt[3].x = (m_p[7][X] * c[7]) + center.x;
-
-        pt[0].y = (m_p[4][Y] * c[4]) + center.y;
-        pt[1].y = (m_p[5][Y] * c[5]) + center.y;
-        pt[2].y = (m_p[6][Y] * c[6]) + center.y;
-        pt[3].y = (m_p[7][Y] * c[7]) + center.y;
-        dc.SetBrush(*wxRED_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[4][X] * c[4]) + center.x, (m_p[4][Y] * c[4]) + center.y),
+            wxPoint2DDouble((m_p[5][X] * c[5]) + center.x, (m_p[5][Y] * c[5]) + center.y),
+            wxPoint2DDouble((m_p[6][X] * c[6]) + center.x, (m_p[6][Y] * c[6]) + center.y),
+            wxPoint2DDouble((m_p[7][X] * c[7]) + center.x, (m_p[7][Y] * c[7]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxRED_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
 
     if(((m_p[5][X]*c[5] - m_p[1][X]*c[1]) * (m_p[0][Y]*c[0] - m_p[1][Y]*c[1])
             - (m_p[5][Y]*c[5] - m_p[1][Y]*c[1]) * (m_p[0][X]*c[0] - m_p[1][X]*c[1])) > 0)
     {
         //|1->5 x 1->0| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[0][X] * c[0]) + center.x;
-        pt[1].x = (m_p[1][X] * c[1]) + center.x;
-        pt[2].x = (m_p[5][X] * c[5]) + center.x;
-        pt[3].x = (m_p[4][X] * c[4]) + center.x;
-
-        pt[0].y = (m_p[0][Y] * c[0]) + center.y;
-        pt[1].y = (m_p[1][Y] * c[1]) + center.y;
-        pt[2].y = (m_p[5][Y] * c[5]) + center.y;
-        pt[3].y = (m_p[4][Y] * c[4]) + center.y;
-        dc.SetBrush(*wxGREEN_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[0][X] * c[0]) + center.x, (m_p[0][Y] * c[0]) + center.y),
+            wxPoint2DDouble((m_p[1][X] * c[1]) + center.x, (m_p[1][Y] * c[1]) + center.y),
+            wxPoint2DDouble((m_p[5][X] * c[5]) + center.x, (m_p[5][Y] * c[5]) + center.y),
+            wxPoint2DDouble((m_p[4][X] * c[4]) + center.x, (m_p[4][Y] * c[4]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxGREEN_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
     else if(((m_p[3][X]*c[3] - m_p[2][X]*c[2]) * (m_p[6][Y]*c[6] - m_p[2][Y]*c[2])
              - (m_p[3][Y]*c[3] - m_p[2][Y]*c[2]) * (m_p[6][X]*c[6] - m_p[2][X]*c[2])) > 0)
     {
         // |2->3 x 2->6| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[3][X] * c[3]) + center.x;
-        pt[1].x = (m_p[2][X] * c[2]) + center.x;
-        pt[2].x = (m_p[6][X] * c[6]) + center.x;
-        pt[3].x = (m_p[7][X] * c[7]) + center.x;
-
-        pt[0].y = (m_p[3][Y] * c[3]) + center.y;
-        pt[1].y = (m_p[2][Y] * c[2]) + center.y;
-        pt[2].y = (m_p[6][Y] * c[6]) + center.y;
-        pt[3].y = (m_p[7][Y] * c[7]) + center.y;
-        dc.SetBrush(*wxGREEN_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[3][X] * c[3]) + center.x, (m_p[3][Y] * c[3]) + center.y),
+            wxPoint2DDouble((m_p[2][X] * c[2]) + center.x, (m_p[2][Y] * c[2]) + center.y),
+            wxPoint2DDouble((m_p[6][X] * c[6]) + center.x, (m_p[6][Y] * c[6]) + center.y),
+            wxPoint2DDouble((m_p[7][X] * c[7]) + center.x, (m_p[7][Y] * c[7]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxGREEN_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
 
     if(((m_p[2][X]*c[2] - m_p[1][X]*c[1]) * (m_p[5][Y]*c[5] - m_p[1][Y]*c[1])
             - (m_p[2][Y]*c[2] - m_p[1][Y]*c[1]) * (m_p[5][X]*c[5] - m_p[1][X]*c[1])) > 0)
     {
         //|1->5 x 1->0| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[1][X] * c[1]) + center.x;
-        pt[1].x = (m_p[2][X] * c[2]) + center.x;
-        pt[2].x = (m_p[6][X] * c[6]) + center.x;
-        pt[3].x = (m_p[5][X] * c[5]) + center.x;
-
-        pt[0].y = (m_p[1][Y] * c[1]) + center.y;
-        pt[1].y = (m_p[2][Y] * c[2]) + center.y;
-        pt[2].y = (m_p[6][Y] * c[6]) + center.y;
-        pt[3].y = (m_p[5][Y] * c[5]) + center.y;
-        dc.SetBrush(*wxBLUE_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[1][X] * c[1]) + center.x, (m_p[1][Y] * c[1]) + center.y),
+            wxPoint2DDouble((m_p[2][X] * c[2]) + center.x, (m_p[2][Y] * c[2]) + center.y),
+            wxPoint2DDouble((m_p[6][X] * c[6]) + center.x, (m_p[6][Y] * c[6]) + center.y),
+            wxPoint2DDouble((m_p[5][X] * c[5]) + center.x, (m_p[5][Y] * c[5]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxBLUE_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
     else if(((m_p[4][X]*c[4] - m_p[0][X]*c[0]) * (m_p[3][Y]*c[3] - m_p[0][Y]*c[0])
              - (m_p[4][Y]*c[4] - m_p[0][Y]*c[0]) * (m_p[3][X]*c[3] - m_p[0][X]*c[0])) > 0)
     {
         // |2->3 x 2->6| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[0][X] * c[0]) + center.x;
-        pt[1].x = (m_p[3][X] * c[3]) + center.x;
-        pt[2].x = (m_p[7][X] * c[7]) + center.x;
-        pt[3].x = (m_p[4][X] * c[4]) + center.x;
-
-        pt[0].y = (m_p[0][Y] * c[0]) + center.y;
-        pt[1].y = (m_p[3][Y] * c[3]) + center.y;
-        pt[2].y = (m_p[7][Y] * c[7]) + center.y;
-        pt[3].y = (m_p[4][Y] * c[4]) + center.y;
-        dc.SetBrush(*wxBLUE_BRUSH);
-        dc.DrawPolygon(4, pt);
+        const wxPoint2DDouble points[4] =
+        {
+            wxPoint2DDouble((m_p[0][X] * c[0]) + center.x, (m_p[0][Y] * c[0]) + center.y),
+            wxPoint2DDouble((m_p[3][X] * c[3]) + center.x, (m_p[3][Y] * c[3]) + center.y),
+            wxPoint2DDouble((m_p[7][X] * c[7]) + center.x, (m_p[7][Y] * c[7]) + center.y),
+            wxPoint2DDouble((m_p[4][X] * c[4]) + center.x, (m_p[4][Y] * c[4]) + center.y)
+        };
+        graphicsContext->SetBrush(*wxBLUE_BRUSH);
+        graphicsContext->DrawLines(WXSIZEOF(points), points);
     }
-
 }
+
 double rad2deg(double rad)
 {
     return (180.0 * rad / (M_PI));
-}
-
-void CubeDlg::DrawPolygon(wxBufferedPaintDC &dc, const unsigned int &i, const unsigned int &j, const unsigned int &k, const unsigned int &h)
-{
-    // perspective: z = 1 + p[z]/1000
-    double c[8];
-
-    // Perspektive: *1+z/1000000
-    for (int iIndex = 0; iIndex < 8; iIndex++)
-    {
-        c[i] = 1 + m_p[iIndex][Z] / 100000;
-    }
-
-    // Get window dimensions
-    wxSize sz = wxDialog::GetClientSize();
-    // determine the center of the canvas
-    const wxPoint center(wxPoint(sz.x / 2, sz.y / 2));
-
-    if(((m_p[i][X]*c[i] - m_p[j][X]*c[j]) * (m_p[k][Y]*c[k] - m_p[j][Y]*c[j])
-            - (m_p[i][Y]*c[i] - m_p[j][Y]*c[j]) * (m_p[k][X]*c[k] - m_p[j][X]*c[j])) > 0)
-    {
-        // |j->i x j->k| > 0
-        wxPoint pt[4];
-        pt[0].x = (m_p[i][X] * c[i]) + center.x;
-        pt[1].x = (m_p[j][X] * c[j]) + center.x;
-        pt[2].x = (m_p[k][X] * c[k]) + center.x;
-        pt[3].x = (m_p[h][X] * c[h]) + center.x;
-
-        pt[0].y = (m_p[i][Y] * c[i]) + center.y;
-        pt[1].y = (m_p[j][Y] * c[j]) + center.y;
-        pt[2].y = (m_p[k][Y] * c[k]) + center.y;
-        pt[3].y = (m_p[h][Y] * c[h]) + center.y;
-
-        // Winkel zwischen dem Vektor (v1,v2,v3), der senkrecht auf der Flaeche steht
-        // und dem Einheitsvektor in Richtung der Beleuchtungsquelle (0,0,1)
-        // (d.h. Licht von vorne) bestimmt die Helligkeit der Flaeche.
-        const double v1 = (m_p[i][Y] - m_p[j][Y]) * (m_p[k][Z] - m_p[j][Z])
-                          - (m_p[i][Z] - m_p[j][Z]) * (m_p[k][Y] - m_p[j][Y]);
-        const double v2 = (m_p[i][Z] - m_p[j][Z]) * (m_p[k][X] - m_p[j][X])
-                          - (m_p[i][X] - m_p[j][X]) * (m_p[k][Z] - m_p[j][Z]);
-        const double v3 = (m_p[i][X] - m_p[j][X]) * (m_p[k][Y] - m_p[j][Y])
-                          - (m_p[i][Y] - m_p[j][Y]) * (m_p[k][X] - m_p[j][X]);
-
-        const int deg(rad2deg(asin(sqrt((v2 * v2 + v1 * v1) / (v1 * v1 + v2 * v2 + v3 * v3)))));
-
-        wxBrush Brush(wxColour(220 - deg, 220 - deg, 220 - deg));
-        dc.SetBrush(Brush);
-        dc.DrawPolygon(4, pt);
-    }
 }
 
 void CubeDlg::CubeDlgSize(wxSizeEvent& WXUNUSED(event))
